@@ -2,7 +2,7 @@
 # (src/gen/gen_all.c, made from the game) into the public repository ugh-re and pushes a commit.
 # The public history is its own: it never contains gen_all.c or any game file.
 param([Parameter(Mandatory = $true)][string]$Message, [string]$Repo = "Buyukcaglar/ugh-re")
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"   # (git and gh report progress on stderr; exit codes are checked)
 $root = Split-Path -Parent $PSScriptRoot
 $pub = Join-Path $root "work\public"
 if (-not (Test-Path (Join-Path $pub ".git"))) {
@@ -10,11 +10,13 @@ if (-not (Test-Path (Join-Path $pub ".git"))) {
     gh repo clone $Repo $pub
     if ($LASTEXITCODE -ne 0) { throw "cannot clone $Repo" }
 }
-git -C $pub pull --ff-only 2>$null
+git -C $pub pull --ff-only 2>$null   # (fails harmlessly on the first, empty publish)
 Get-ChildItem -Force $pub | Where-Object { $_.Name -ne ".git" } | Remove-Item -Recurse -Force
 $tar = Join-Path $root "work\public.tar"
 git -C $root archive --format=tar -o $tar HEAD
+if ($LASTEXITCODE -ne 0) { throw "git archive failed" }
 tar -x -f $tar -C $pub --exclude "src/gen/gen_all.c"
+if ($LASTEXITCODE -ne 0) { throw "tar failed" }
 Remove-Item $tar
 foreach ($bad in @("src/gen/gen_all.c", "_references", "work")) {
     if (Test-Path (Join-Path $pub $bad)) { throw "$bad must not be published" }
@@ -25,4 +27,5 @@ if ($LASTEXITCODE -eq 0) { Write-Host "nothing to publish"; exit 0 }
 $msg = $Message + "`n`nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 git -C $pub commit -q -m $msg
 git -C $pub push origin HEAD
+if ($LASTEXITCODE -ne 0) { throw "push failed" }
 Write-Host "published to $Repo"
