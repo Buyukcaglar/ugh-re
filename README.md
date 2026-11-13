@@ -1,5 +1,7 @@
 # UGH! 64bit
 
+![UGH! 64bit running in a window on Windows 11](docs/screenshot.png)
+
 A native 64-bit Windows version of **UGH!** (Play Byte, 1992), the DOS game in which a caveman flies a
 pedal-powered stone-age helicopter as a taxi. It is built from a disassembly and static recompilation
 of the original DOS program. The music and sound effects of the **Amiga version** are also included,
