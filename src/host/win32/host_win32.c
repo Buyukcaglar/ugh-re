@@ -868,6 +868,7 @@ static void add_menu(void)
 }
 
 /* ---- keyboard ---- */
+static int g_shortcut_a;   /* the A of Ctrl+Shift+A is down: kept from the game until released */
 static void release_keys(void)
 {
     int i;
@@ -1015,6 +1016,7 @@ static LRESULT CALLBACK wndproc(HWND h, UINT msg, WPARAM w, LPARAM l)
     case WM_KEYDOWN:
         if (w == 'A' && (GetKeyState(VK_CONTROL) & 0x8000) && (GetKeyState(VK_SHIFT) & 0x8000)) {
             if (!(l & (1 << 30))) set_amiga_sound(!g_opt_amiga);
+            g_shortcut_a = 1;          /* its release is the shortcut's too, whatever is let go first */
             return 0;
         }
         if (w == VK_F11) {
@@ -1025,7 +1027,7 @@ static LRESULT CALLBACK wndproc(HWND h, UINT msg, WPARAM w, LPARAM l)
         return 0;
     case WM_KEYUP:
         if (w == VK_F11) return 0;
-        if (w == 'A' && (GetKeyState(VK_CONTROL) & 0x8000) && (GetKeyState(VK_SHIFT) & 0x8000)) return 0;
+        if (w == 'A' && g_shortcut_a) { g_shortcut_a = 0; return 0; }
         key_event(w, l, 0);
         return 0;
     case WM_CLOSE:

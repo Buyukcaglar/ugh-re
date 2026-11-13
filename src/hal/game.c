@@ -190,6 +190,23 @@ static void on_stop(Cpu *c)
 static void on_init(Cpu *c) { log_call(c, "init"); g_tune = -1; amiga_audio_stop(); }
 static void on_done(Cpu *c) { log_call(c, "done"); g_tune = -1; amiga_audio_stop(); }
 
+/* The game's "key hit?" test (024B:44F1, used by the intro, the title, the cutscenes and the other
+ * "press a key" waits) reports any change of the last scancode its int 9 handler saw: presses,
+ * releases, the E0/E1 prefixes and the modifiers alike.  So the host's own shortcuts (Ctrl+Shift+A
+ * for the sound, Alt+Enter) skipped the intro through their Ctrl, Shift or Alt.  At 44FE the new
+ * scancode is in AL and already stored in [2643]; a modifier or a prefix is turned back into the
+ * previous scancode, so it is no key hit.  The controls in play read the key table instead (the
+ * Ctrl fire buttons included), so they are not affected. */
+static void key_hit_filter(Cpu *c)
+{
+    uint8_t raw = (uint8_t)c->r[AX], k = raw & 0x7F;
+    if (raw == 0xE0 || raw == 0xE1 || k == 0x1D || k == 0x2A || k == 0x36 || k == 0x38) {
+        uint8_t prev = rbs(DGROUP, 0x2645);
+        wbs(DGROUP, 0x2643, prev);
+        r8set(c, 0, prev);   /* AL */
+    }
+}
+
 void game_hooks_after_load(void)
 {
     g_log = getenv("UGH_SNDLOG") != NULL;
@@ -224,4 +241,5 @@ void game_hooks_after_load(void)
     gen_watch(GAME, 0x0A45, cut_end);
     gen_watch(GAME, 0x09FF, cut_entry);
     gen_watch(GAME, 0x0A23, cut_loop);
+    gen_watch(GAME, 0x44FE, key_hit_filter);
 }
