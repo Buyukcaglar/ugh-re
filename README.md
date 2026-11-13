@@ -38,7 +38,7 @@ The keys of this version:
 |---|---|
 | **Ctrl+Shift+A** | switch between the DOS (AdLib) and Amiga (TFMX) sound |
 | Alt+Enter, F11 | full screen |
-| Alt+Space | the window menu: display options (4:3, integer and smooth scaling, CRT scanlines), sound, mute, pause when inactive, restart, About |
+| Alt+Space | the window menu: display options (scaling: 4:3, integer (default) or smooth; CRT scanlines, off by default), sound, mute, pause when inactive, restart, About |
 
 An Xbox-style gamepad works as the first player's keys: D-pad or left stick = arrows, A = Up,
 B or X = action (right Ctrl), Start = F1, Back = Esc, Y = Enter, LB = F2, RB = P.

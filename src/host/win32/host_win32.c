@@ -48,7 +48,7 @@ static char g_game_dir[MAX_PATH * 3];
 static uint32_t g_frame[640 * 480];
 static int g_fw = 320, g_fh = 200;
 static int g_opt_crt = 0;   /* Display > CRT scanlines (crt.h) */
-static int g_opt_aspect = 1, g_opt_integer = 0, g_opt_smooth = 0, g_opt_full = 0, g_opt_mute = 0, g_opt_pause_inactive = 1;
+static int g_opt_aspect = 0, g_opt_integer = 1, g_opt_smooth = 0, g_opt_full = 0, g_opt_mute = 0, g_opt_pause_inactive = 1;
 static int g_opt_amiga = 0;          /* Sound: the Amiga version's music and effects */
 static char g_save_dir[MAX_PATH * 3];
 static int g_inactive;               /* the window is not the foreground window */
@@ -89,11 +89,21 @@ static void ini_set_int(const wchar_t *key, int v)
     (void)swprintf(b, 16, L"%d", v);
     (void)WritePrivateProfileStringW(INI_SECTION, key, b, g_ini);
 }
+/* Display > scaling, one of three (a radio group): 4:3 aspect ratio (stretched to 4:3, sharp),
+ * integer scaling (square pixels, whole multiples; the default) or smooth scaling (4:3, filtered) */
+enum { SCALE_ASPECT, SCALE_INTEGER, SCALE_SMOOTH };
+static int g_opt_scale = SCALE_INTEGER;
+static void set_scale(int mode)
+{
+    if (mode < SCALE_ASPECT || mode > SCALE_SMOOTH) mode = SCALE_INTEGER;
+    g_opt_scale = mode;
+    g_opt_aspect = mode != SCALE_INTEGER;
+    g_opt_integer = mode == SCALE_INTEGER;
+    g_opt_smooth = mode == SCALE_SMOOTH;
+}
 static void save_options(void)
 {
-    ini_set_int(L"Aspect", g_opt_aspect);
-    ini_set_int(L"Integer", g_opt_integer);
-    ini_set_int(L"Smooth", g_opt_smooth);
+    ini_set_int(L"Scale", g_opt_scale);
     ini_set_int(L"Crt", g_opt_crt);
     ini_set_int(L"FullScreen", g_opt_full);
     ini_set_int(L"Mute", g_opt_mute);
@@ -689,9 +699,9 @@ static void update_menu(void)
     HMENU m = GetSystemMenu(g_hwnd, FALSE);
     if (m == NULL) return;
     (void)CheckMenuItem(m, SC_UGH_FULL, MF_BYCOMMAND | (g_opt_full ? MF_CHECKED : MF_UNCHECKED));
-    (void)CheckMenuItem(m, SC_UGH_ASPECT, MF_BYCOMMAND | (g_opt_aspect ? MF_CHECKED : MF_UNCHECKED));
-    (void)CheckMenuItem(m, SC_UGH_INTEGER, MF_BYCOMMAND | (g_opt_integer ? MF_CHECKED : MF_UNCHECKED));
-    (void)CheckMenuItem(m, SC_UGH_SMOOTH, MF_BYCOMMAND | (g_opt_smooth ? MF_CHECKED : MF_UNCHECKED));
+    (void)CheckMenuRadioItem(m, SC_UGH_ASPECT, SC_UGH_SMOOTH,
+                             g_opt_scale == SCALE_ASPECT ? SC_UGH_ASPECT : g_opt_scale == SCALE_SMOOTH ? SC_UGH_SMOOTH : SC_UGH_INTEGER,
+                             MF_BYCOMMAND);
     (void)CheckMenuItem(m, SC_UGH_CRT, MF_BYCOMMAND | (g_opt_crt ? MF_CHECKED : MF_UNCHECKED));
     (void)CheckMenuItem(m, SC_UGH_MUTE, MF_BYCOMMAND | (g_opt_mute ? MF_CHECKED : MF_UNCHECKED));
     (void)CheckMenuItem(m, SC_UGH_PAUSE, MF_BYCOMMAND | (g_opt_pause_inactive ? MF_CHECKED : MF_UNCHECKED));
@@ -943,9 +953,9 @@ static LRESULT CALLBACK wndproc(HWND h, UINT msg, WPARAM w, LPARAM l)
     case WM_SYSCOMMAND:
         switch (w & 0xFFF0u) {
         case SC_UGH_FULL: set_full(!g_opt_full); update_menu(); return 0;
-        case SC_UGH_ASPECT: g_opt_aspect = !g_opt_aspect; save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
-        case SC_UGH_INTEGER: g_opt_integer = !g_opt_integer; save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
-        case SC_UGH_SMOOTH: g_opt_smooth = !g_opt_smooth; save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
+        case SC_UGH_ASPECT: set_scale(SCALE_ASPECT); save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
+        case SC_UGH_INTEGER: set_scale(SCALE_INTEGER); save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
+        case SC_UGH_SMOOTH: set_scale(SCALE_SMOOTH); save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
         case SC_UGH_CRT: g_opt_crt = !g_opt_crt; save_options(); update_menu(); (void)InvalidateRect(h, NULL, FALSE); return 0;
         case SC_UGH_MUTE: g_opt_mute = !g_opt_mute; audio_set_muted(g_opt_mute || (g_inactive && g_opt_pause_inactive)); save_options(); update_menu(); return 0;
         case SC_UGH_ABOUT: show_about(); return 0;
@@ -1110,9 +1120,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmd, int show)
     g_timer = CreateWaitableTimerExW(NULL, NULL, 0x00000002 /* HIGH_RESOLUTION */, TIMER_ALL_ACCESS);
     if (g_timer == NULL) g_timer = CreateWaitableTimerW(NULL, TRUE, NULL);
     ini_path();
-    g_opt_aspect = ini_int(L"Aspect", 1);
-    g_opt_integer = ini_int(L"Integer", 0);
-    g_opt_smooth = ini_int(L"Smooth", 0);
+    set_scale(ini_int(L"Scale", SCALE_INTEGER));
     g_opt_crt = ini_int(L"Crt", 0);
     g_opt_mute = ini_int(L"Mute", 0);
     g_opt_pause_inactive = ini_int(L"PauseInactive", 1);
