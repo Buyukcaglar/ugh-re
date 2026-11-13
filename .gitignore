@@ -1,0 +1,10 @@
+# Original game files: never committed (needed at run time, supplied by the player)
+_references/
+work/
+build/
+out/
+*.pdb
+*.obj
+*.ilk
+__pycache__/
+dist/

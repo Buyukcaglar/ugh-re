@@ -1,0 +1,33 @@
+/* ugh.rc - UGH64.exe's resources: the program icon (ugh_icon.png, tools/png2ico.py) and the
+ * version information, v1.0. */
+#include <winver.h>
+
+1 ICON "ugh.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+ FILEFLAGS 0x0L
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "UGH! 64bit"
+            VALUE "FileVersion", "1.0"
+            VALUE "InternalName", "UGH64"
+            VALUE "LegalCopyright", "Copyright (c) 2026 Onur BUYUKCAGLAR"
+            VALUE "OriginalFilename", "UGH64.exe"
+            VALUE "ProductName", "UGH! 64bit"
+            VALUE "ProductVersion", "1.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END
