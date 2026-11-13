@@ -1,4 +1,4 @@
-/* ugh.rc - UGH64.exe's resources: the program icon (ugh_icon.png, tools/png2ico.py) and the
+/* ugh.rc - UGH!64.exe's resources: the program icon (ugh_icon.png, tools/png2ico.py) and the
  * version information, v1.0. */
 #include <winver.h>
 
@@ -19,9 +19,9 @@ BEGIN
         BEGIN
             VALUE "FileDescription", "UGH! 64bit"
             VALUE "FileVersion", "1.0"
-            VALUE "InternalName", "UGH64"
+            VALUE "InternalName", "UGH!64"
             VALUE "LegalCopyright", "Copyright (c) 2026 Onur BUYUKCAGLAR"
-            VALUE "OriginalFilename", "UGH64.exe"
+            VALUE "OriginalFilename", "UGH!64.exe"
             VALUE "ProductName", "UGH! 64bit"
             VALUE "ProductVersion", "1.0"
         END

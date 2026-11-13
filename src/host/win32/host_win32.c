@@ -1,4 +1,4 @@
-/* host_win32.c - UGH!'s Windows x64 host (UGH64.exe, v1.0).
+/* host_win32.c - UGH!'s Windows x64 host (UGH!64.exe, v1.0).
  *
  * The window shows the VGA picture scaled to the client area (4:3 aspect by default, optional integer
  * scaling and smoothing, the CRT scanlines of Civ64), passes the keyboard to the emulated PC as set-1

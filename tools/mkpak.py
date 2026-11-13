@@ -1,6 +1,6 @@
 """mkpak.py GAMEDIR [AMIGA.ADF] OUT.pak - packs the game's files into one file for src/hal/pack.c.
 
-Used by `build.cmd private` for a personal build that carries the game inside UGH64.exe (and,
+Used by `build.cmd private` for a personal build that carries the game inside UGH!64.exe (and,
 when given, the Amiga disk image for the Amiga sound, stored as AMIGA.ADF).
 Such a build contains the game's data: it must not be published or shared."""
 import os

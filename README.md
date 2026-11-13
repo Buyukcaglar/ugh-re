@@ -11,10 +11,10 @@ sound you also need the Amiga version's disk image.
 ## What you need
 
 - Windows 10 or 11, 64-bit.
-- The DOS game: put `UGH64.exe` in the folder that holds `UGH.EXE`, or start it and choose that
-  folder when asked. You can also give the folder on the command line: `UGH64.exe C:\Games\UGH`.
-- Optional: the Amiga disk image (`.adf`) for the Amiga sound. UGH64 looks for any `*.adf` in the
-  game folder, in an `amiga` folder next to it, in the folder above it and next to `UGH64.exe`.
+- The DOS game: put `UGH!64.exe` in the folder that holds `UGH.EXE`, or start it and choose that
+  folder when asked. You can also give the folder on the command line: `UGH!64.exe C:\Games\UGH`.
+- Optional: the Amiga disk image (`.adf`) for the Amiga sound. UGH!64 looks for any `*.adf` in the
+  game folder, in an `amiga` folder next to it, in the folder above it and next to `UGH!64.exe`.
   You can also choose it from the window menu with **Sound ▸ Locate Amiga disk…**.
 
 High scores and settings are saved in `%APPDATA%\UGH64`.
@@ -45,7 +45,7 @@ B or X = action (right Ctrl), Start = F1, Back = Esc, Y = Enter, LB = F2, RB = P
 
 ## The Amiga sound
 
-The Amiga version plays its music and effects with Chris Hülsbeck's TFMX player. UGH64 includes a
+The Amiga version plays its music and effects with Chris Hülsbeck's TFMX player. UGH!64 includes a
 C translation of the player found on the Amiga disk (`TFMX.obj`) and emulates the four Paula sound
 channels. It reads the tunes and samples (`mdat.UGH!-All_Sounds.o`, `smpl.UGH!-All_Sounds`) from your
 disk image. The tunes follow the DOS game: the title tune, the level-start jingle, each level's own
@@ -59,9 +59,9 @@ with `capstone`.
 
 ```
 build.cmd           the game and the headless test program
-build.cmd game      build\UGH64.exe
+build.cmd game      build\UGH!64.exe
 build.cmd test      build\ughtest.exe (runs the game without a window, for tests)
-package.cmd         dist\UGH64-1.0-win64.zip
+package.cmd         dist\UGH!64-1.0-win64.zip
 ```
 
 `src\gen\gen_all.c` (the recompiled code) is generated from your own copy of the game by
@@ -74,7 +74,7 @@ build\ughtest.exe C:\Games\UGH 100
 python tools\ughrec.py           (writes src\gen\gen_all.c)
 ```
 
-`build.cmd private` makes `build\private\UGH64.exe` with the game files (and the Amiga disk, if
+`build.cmd private` makes `build\private\UGH!64.exe` with the game files (and the Amiga disk, if
 found in `_references\amiga`) inside it. That program contains the game: keep it for your own use
 and never share it.
 
