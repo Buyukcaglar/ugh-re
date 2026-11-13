@@ -91,6 +91,7 @@ const uint8_t *hal_pack_find(const char *name, size_t *len);
 /* game.c: what the port knows about the game's program (hooks for the Amiga sound, the version) */
 int game_identify(const uint8_t *image, size_t len);   /* 1: the known UGH.EXE */
 void game_hooks_after_load(void);
+void game_amiga_resume(void);   /* the Amiga disk was just loaded: start the current tune on it */
 unsigned long hal_frame_count(void);              /* frames since the start */
 
 #endif

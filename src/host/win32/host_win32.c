@@ -706,7 +706,6 @@ static void update_menu(void)
     (void)CheckMenuItem(m, SC_UGH_MUTE, MF_BYCOMMAND | (g_opt_mute ? MF_CHECKED : MF_UNCHECKED));
     (void)CheckMenuItem(m, SC_UGH_PAUSE, MF_BYCOMMAND | (g_opt_pause_inactive ? MF_CHECKED : MF_UNCHECKED));
     (void)CheckMenuRadioItem(m, SC_UGH_SND_DOS, SC_UGH_SND_AMIGA, g_opt_amiga ? SC_UGH_SND_AMIGA : SC_UGH_SND_DOS, MF_BYCOMMAND);
-    (void)EnableMenuItem(m, SC_UGH_SND_AMIGA, MF_BYCOMMAND | (amiga_audio_ready() ? MF_ENABLED : MF_GRAYED));
 }
 
 /* ---- the Amiga sound: its TFMX module, from the Amiga disk image (ADF) ----
@@ -748,7 +747,7 @@ static int try_adf_dir(const wchar_t *dir)
     FindClose(h);
     return ok;
 }
-static void find_amiga_disk(void)
+static void find_amiga_disk_now(void)
 {
     wchar_t buf[MAX_PATH * 2], gd[MAX_PATH * 2], sub[MAX_PATH * 2], *slash;
     if (amiga_audio_ready()) return;
@@ -775,6 +774,14 @@ static void find_amiga_disk(void)
     (void)swprintf(sub, MAX_PATH * 2, L"%ls\\amiga", buf);
     (void)try_adf_dir(sub);
 }
+/* the Amiga music runs beside the DOS music all the time (so that Ctrl+Shift+A switches at once);
+ * a disk found after the game started its tune starts that tune now */
+static void find_amiga_disk(void)
+{
+    int was = amiga_audio_ready();
+    find_amiga_disk_now();
+    if (!was && amiga_audio_ready()) game_amiga_resume();
+}
 static void pick_amiga_disk(HWND owner)
 {
     IFileOpenDialog *d = NULL;
@@ -787,8 +794,11 @@ static void pick_amiga_disk(HWND owner)
         IShellItem *it = NULL;
         PWSTR path = NULL;
         if (SUCCEEDED(d->lpVtbl->GetResult(d, &it)) && SUCCEEDED(it->lpVtbl->GetDisplayName(it, SIGDN_FILESYSPATH, &path))) {
-            if (try_adf(path)) (void)WritePrivateProfileStringW(INI_SECTION, L"AmigaDisk", path, g_ini);
-            else MessageBoxW(owner, L"That file is not the UGH! Amiga disk: its TFMX music (mdat.UGH!-All_Sounds.o "
+            int was = amiga_audio_ready();
+            if (try_adf(path)) {
+                (void)WritePrivateProfileStringW(INI_SECTION, L"AmigaDisk", path, g_ini);
+                if (!was) game_amiga_resume();
+            } else MessageBoxW(owner, L"That file is not the UGH! Amiga disk: its TFMX music (mdat.UGH!-All_Sounds.o "
                                     L"and smpl.UGH!-All_Sounds) was not found in it.", APP_NAMEW, MB_OK | MB_ICONWARNING);
             CoTaskMemFree(path);
         }
@@ -1157,10 +1167,8 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmd, int show)
     (void)audio_open();
     audio_set_muted(g_opt_mute);
     if (!start_game()) return 1;
-    if (g_opt_amiga) {
-        find_amiga_disk();
-        g_opt_amiga = amiga_audio_ready();
-    }
+    find_amiga_disk();                 /* (quietly: without it, Amiga sound asks for it when chosen) */
+    if (g_opt_amiga) g_opt_amiga = amiga_audio_ready();
     hal_set_audio_source(g_opt_amiga);
     update_menu();
     while (!g_quit) {

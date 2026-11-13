@@ -60,10 +60,25 @@ static void log_call(Cpu *c, const char *what)
                 arg(c, 2), arg(c, 0), arg(c, 4), arg(c, 6), arg(c, 8), arg(c, 10), rws(DGROUP, LEVEL_INDEX));
 }
 
+/* the tune the game is playing now (-1: none), kept so that an Amiga disk found later (Locate
+ * Amiga disk...) starts it at once instead of at the game's next tune */
+static int g_tune = -1, g_tune_speed, g_tune_volume;
+
 static void amiga_tune(int song, int fade_speed, int volume)
 {
+    g_tune = song;
+    g_tune_speed = fade_speed;
+    g_tune_volume = volume;
     amiga_audio_song(song);
     if (amiga_audio_ready()) tfmx_fade(fade_speed, volume);
+}
+
+void game_amiga_resume(void)
+{
+    if (amiga_audio_ready() && g_tune >= 0 && !tfmx_playing()) {
+        amiga_audio_song(g_tune);
+        tfmx_fade(g_tune_speed, g_tune_volume);
+    }
 }
 
 /* the DOS tune, by its data segment: the Amiga tune for the same moment */
@@ -169,10 +184,11 @@ static void on_song2(Cpu *c) { log_call(c, "song2"); play(arg(c, 6)); }
 static void on_stop(Cpu *c)
 {
     log_call(c, "stop");
+    g_tune = -1;
     if (amiga_audio_ready()) tfmx_fade(8, 0);
 }
-static void on_init(Cpu *c) { log_call(c, "init"); amiga_audio_stop(); }
-static void on_done(Cpu *c) { log_call(c, "done"); amiga_audio_stop(); }
+static void on_init(Cpu *c) { log_call(c, "init"); g_tune = -1; amiga_audio_stop(); }
+static void on_done(Cpu *c) { log_call(c, "done"); g_tune = -1; amiga_audio_stop(); }
 
 void game_hooks_after_load(void)
 {
