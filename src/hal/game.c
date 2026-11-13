@@ -140,6 +140,30 @@ static void fx_low_energy(Cpu *c)   /* once a frame: the Amiga beeps every 8 fra
     fx(0x14031300u);
 }
 
+/* The cutscenes.  The Amiga scripts are commands (walk, jump, wait, play effect); the DOS ones
+ * (engine at 024B:09D7) are per-actor lists of entries "sprite word, dx byte, dy byte", a
+ * negative word opening a loop and 8000h closing it or ending the actor.  SI points into those
+ * lists (DGROUP), so an entry is recognised by SI.  The matching moments:
+ *   title (list DS:24DE, Amiga script 6F76) and ending (DS:1020, Amiga 7450): an actor jumps and
+ *     lands, effect 02 on landing = the end of its list (2584, 13F4);
+ *   intro (DS:1792 = Amiga list 6B44): a falling thing hits the ground and bounces, effect 00
+ *     at the first bounce entry (1B0E, Amiga 6B9E); the caveman shakes his fist after his speech
+ *     bubble, effect 08 when that loop starts (1A40, Amiga 6BF8).
+ * The other intro (DS:1E40 = Amiga 6624) has no effects on the Amiga either. */
+static void cut_end(Cpu *c)         /* 024B:0A45, an actor's list ended; SI = after its 8000h */
+{
+    /* (a finished actor rereads its 8000h every tick; [bx+2A4D] = FFFFh marks it finished) */
+    if ((c->r[SI] == 0x2586 || c->r[SI] == 0x13F6) && SLOT(c, 0x2A4D) != 0xFFFF) fx(0x14023300u);
+}
+static void cut_entry(Cpu *c)       /* 024B:09FF, an entry read; SI = after its sprite word */
+{
+    if (c->r[SI] == 0x1B10) fx(0x14003300u);
+}
+static void cut_loop(Cpu *c)        /* 024B:0A23, a loop opened; SI = after its count word */
+{
+    if (c->r[SI] == 0x1A42) fx(0x14083300u);
+}
+
 static void on_song(Cpu *c) { log_call(c, "song"); play(arg(c, 6)); }
 static void on_song2(Cpu *c) { log_call(c, "song2"); play(arg(c, 6)); }
 static void on_stop(Cpu *c)
@@ -181,4 +205,7 @@ void game_hooks_after_load(void)
     gen_watch(GAME, 0x29C5, fx_inhale);
     gen_watch(GAME, 0x2995, fx_blow);
     gen_watch(GAME, 0x14AB, fx_slot_done);
+    gen_watch(GAME, 0x0A45, cut_end);
+    gen_watch(GAME, 0x09FF, cut_entry);
+    gen_watch(GAME, 0x0A23, cut_loop);
 }

@@ -33,6 +33,12 @@
   hails (pitch by passenger kind), stone pick-up and drop, blower in/out, finished passenger
   stop, typing clicks, and a low-energy beep below a third of the energy (the DOS game shows no
   warning; this one is synthesised as on the Amiga, every 8 frames).
+- **Cutscene effects.** The Amiga cutscene scripts are commands (walk, jump, wait, play effect);
+  the DOS ones (engine at 024B:09D7) are per-actor lists of "sprite, dx, dy" entries, and SI
+  identifies the entry. Title (DS:24DE) and ending (DS:1020): the jumping actor lands, effect 02
+  at the end of its list. Intro (DS:1792 = Amiga list 6B44): the fruit hits the caveman, effect
+  00 at its first bounce entry; he raises his fist, effect 08 when that loop opens. The other
+  intro (DS:1E40 = Amiga 6624) is silent on the Amiga too. `work/cut_dec.py` decodes the lists.
 - **Watched addresses and the recompiler.** `tools/ughrec.py` reads the `gen_watch` calls in
   `src/hal/game.c` and starts a block at each watched address, so no recompiled block runs past a
   hook. Rerun it after adding a hook.
@@ -47,7 +53,7 @@
 6. CRT scanlines (from Civ64): done.
 7. Repositories: private `ugh` (everything except game files), public `ugh-re` (no `gen_all.c`).
 8. Amiga music and effects, switchable with Ctrl+Shift+A: done. All 15 effects are mapped to
-   DOS events; only cutscene-script effects (title and ending) have no hook yet.
+   DOS events, the cutscene effects included.
 9. Quality-of-life updates (widescreen and more): after 1–8.
 
 ## Notes for later

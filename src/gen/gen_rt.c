@@ -18,7 +18,7 @@ static int g_on, g_armed, g_checked;
 static const char *g_dump;
 uint64_t g_gen_blocks_run;
 
-#define MAX_WATCH 32
+#define MAX_WATCH 64
 static struct { uint16_t cs, ip; GenWatchFn fn; } g_watch[MAX_WATCH];
 static unsigned g_nwatch;
 static uint8_t g_watch_ip[65536 / 8];   /* a quick filter on IP */
