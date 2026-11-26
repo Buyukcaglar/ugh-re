@@ -1,7 +1,5 @@
 # UGH! 64bit
 
-<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
-
 ![UGH! 64bit running in a window on Windows 11](docs/screenshot.png)
 
 A native 64-bit Windows version of **UGH!** (Play Byte, 1992), the DOS game in which a caveman flies a
@@ -106,3 +104,5 @@ and never share it.
 The port's own code is under the MIT license (see `LICENSE`). UGH! and its programs, music, graphics
 and data belong to their owners and are not part of this software. The YM3812 (AdLib) emulation and
 the CRT scanlines filter come from the author's Civ64 project.
+
+<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
