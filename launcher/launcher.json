@@ -1,0 +1,27 @@
+{
+  "title": "UGH! 64bit",
+  "repo": "Buyukcaglar/ugh-re",
+  "accent": "#c2622d",
+  "note": {
+    "default": "Nothing is compiled: the setup downloads this project's newest Windows release from GitHub (under 1 MB) and points it at your copy. It takes under a minute and needs the folder of the DOS game (the one that holds UGH.EXE). Windows only."
+  },
+  "game": {
+    "name": "UGH! (DOS)",
+    "files": [
+      "UGH.EXE|UGH1.EXE"
+    ]
+  },
+  "setup": {
+    "windows": [
+      "powershell",
+      "-NoProfile",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      "launcher\\setup.ps1",
+      "-Game",
+      "{game}"
+    ]
+  },
+  "play": "* (recomp).cmd"
+}

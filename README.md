@@ -1,5 +1,7 @@
 # UGH! 64bit
 
+<a href="https://recomplauncher.com"><picture><source media="(prefers-color-scheme: dark)" srcset="https://recomplauncher.com/assets/press/launcher/badge-light.svg"><img alt="Get it on RecompLauncher" src="https://recomplauncher.com/assets/press/launcher/badge-dark.svg" height="48"></picture></a>
+
 ![UGH! 64bit running in a window on Windows 11](docs/screenshot.png)
 
 A native 64-bit Windows version of **UGH!** (Play Byte, 1992), the DOS game in which a caveman flies a
@@ -20,6 +22,22 @@ sound you also need the Amiga version's disk image.
   You can also choose it from the window menu with **Sound ▸ Locate Amiga disk…**.
 
 High scores and settings are saved in `%APPDATA%\UGH64`.
+
+## Playing through a launcher
+
+Two launchers can install and start UGH!64 for you. Neither of them contains or downloads the game:
+you still need your own copy of the DOS game.
+
+- **[RecompLauncher](https://recomplauncher.com).** Install UGH! 64bit there, pick your game folder
+  once (the one that holds `UGH.EXE`) and press Play. It starts `UGH!64.exe "<folder>"`. Scaling,
+  full screen and CRT scanlines are settings on the game's page; they are the same settings the
+  program keeps in `%APPDATA%\UGH64\UGH64.ini`. The high scores (`UGH!.HI`) are backed up from
+  `%APPDATA%\UGH64`. The Amiga disk image is still chosen in the program's own menu.
+- **[recomp-launcher](https://github.com/sp00nznet/recomp-launcher)** by sp00nznet. From the next
+  tagged version on, the release carries an installer (`UGH64-Installer-windows-x64.exe`) that asks
+  for your game folder, downloads the newest release and adds a Play button. Until then, running
+  `launcher\setup.ps1 -Game "<folder>"` by hand in a copy of this repository does the same: it
+  unpacks the release into `play\` and writes `UGH (recomp).cmd`, which starts the game. Windows only.
 
 ## Keys
 
@@ -65,6 +83,9 @@ build.cmd game      build\UGH!64.exe
 build.cmd test      build\ughtest.exe (runs the game without a window, for tests)
 package.cmd         dist\UGH!64-1.0-win64.zip
 ```
+
+The zip holds `UGH!64.exe`, `README.md`, `LICENSE.txt` and `recomplauncher.json`, the file
+RecompLauncher reads to install and start the program.
 
 `src\gen\gen_all.c` (the recompiled code) is generated from your own copy of the game by
 `tools\ughrec.py`, and it is not part of the public sources. Without it, the build uses the

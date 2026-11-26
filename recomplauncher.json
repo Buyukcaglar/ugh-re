@@ -1,0 +1,142 @@
+{
+  "$schema": "https://recomplauncher.com/schema/recomplauncher.json",
+  "format": 1,
+  "name": "UGH! 64bit",
+  "repo": "Buyukcaglar/ugh-re",
+  "inputs": [
+    {
+      "id": "game",
+      "label": "Your folder of the DOS game UGH!: the folder that holds UGH.EXE.",
+      "formats": [
+        {
+          "type": "folder"
+        }
+      ],
+      "check": {
+        "file": "UGH.EXE"
+      }
+    }
+  ],
+  "start": {
+    "program": [
+      "UGH!64.exe"
+    ],
+    "args": [
+      "{input:game}"
+    ]
+  },
+  "config": [
+    {
+      "id": "main",
+      "format": "ini",
+      "file": [
+        {
+          "path": "{config}/UGH64/UGH64.ini"
+        }
+      ]
+    }
+  ],
+  "saves": [
+    "{config}/UGH64/UGH!.HI"
+  ],
+  "folders": {
+    "saves": [
+      {
+        "path": "{config}/UGH64"
+      }
+    ]
+  },
+  "settings": [
+    {
+      "id": "scale",
+      "label": "Scaling",
+      "help": "How the picture fills the window.",
+      "choices": [
+        {
+          "label": "Whole numbers",
+          "set": {
+            "UGH64/Scale": "1"
+          }
+        },
+        {
+          "label": "4:3",
+          "set": {
+            "UGH64/Scale": "0"
+          }
+        },
+        {
+          "label": "Smooth",
+          "set": {
+            "UGH64/Scale": "2"
+          }
+        }
+      ],
+      "defaults": {
+        "UGH64/Scale": "1"
+      },
+      "group": "Picture"
+    },
+    {
+      "id": "fullscreen",
+      "label": "Full screen",
+      "help": "Starts in full screen instead of a window.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "UGH64/FullScreen": "0"
+          }
+        },
+        {
+          "label": "On",
+          "set": {
+            "UGH64/FullScreen": "1"
+          }
+        }
+      ],
+      "defaults": {
+        "UGH64/FullScreen": "0"
+      },
+      "group": "Picture"
+    },
+    {
+      "id": "crt",
+      "label": "CRT scanlines",
+      "help": "Draws the picture with the lines of an old monitor.",
+      "choices": [
+        {
+          "label": "Off",
+          "set": {
+            "UGH64/Crt": "0"
+          }
+        },
+        {
+          "label": "On",
+          "set": {
+            "UGH64/Crt": "1"
+          }
+        }
+      ],
+      "defaults": {
+        "UGH64/Crt": "0"
+      },
+      "group": "Picture"
+    }
+  ],
+  "actions": [
+    {
+      "id": "saves",
+      "label": "High scores",
+      "help": "Open the folder your high scores and settings are in.",
+      "open": "saves"
+    }
+  ],
+  "exit_codes": {
+    "1": "It couldn't start: the game's program (UGH.EXE) wasn't found. Pick your game folder again on the game's page."
+  },
+  "system": {
+    "windows": {
+      "version": "10"
+    }
+  }
+}

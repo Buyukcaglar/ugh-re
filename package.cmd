@@ -1,5 +1,6 @@
 @echo off
-rem package.cmd - builds UGH!64.exe and packs dist\UGH!64-1.0-win64.zip (no game files).
+rem package.cmd - builds UGH!64.exe and packs dist\UGH!64-1.0-win64.zip (no game files),
+rem with recomplauncher.json (RecompLauncher reads it from the zip: see docs\PLAN.md).
 setlocal
 set "ROOT=%~dp0"
 call "%ROOT%build.cmd" game || exit /b 1
@@ -9,6 +10,7 @@ mkdir "%D%"
 copy /y "%ROOT%build\UGH!64.exe" "%D%\" >nul || exit /b 1
 copy /y "%ROOT%README.md" "%D%\" >nul
 copy /y "%ROOT%LICENSE" "%D%\LICENSE.txt" >nul
+copy /y "%ROOT%recomplauncher.json" "%D%\" >nul || exit /b 1
 if exist "%ROOT%dist\UGH!64-1.0-win64.zip" del "%ROOT%dist\UGH!64-1.0-win64.zip"
 tar -a -c -f "%ROOT%dist\UGH!64-1.0-win64.zip" -C "%ROOT%dist" UGH!64-1.0-win64 || exit /b 1
 echo %ROOT%dist\UGH!64-1.0-win64.zip

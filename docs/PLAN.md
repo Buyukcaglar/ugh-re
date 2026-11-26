@@ -55,6 +55,52 @@
 8. Amiga music and effects, switchable with Ctrl+Shift+A: done. All 15 effects are mapped to
    DOS events, the cutscene effects included.
 9. Quality-of-life updates (widescreen and more): after 1–8.
+10. Launcher support (RecompLauncher and sp00nznet's recomp-launcher): done on 26 November 2026,
+    without a change to the program. See "Launcher support and releases" below.
+
+## Launcher support and releases
+
+- **RecompLauncher** (recomplauncher.com) installs the program from the GitHub release of `ugh-re`
+  and reads `recomplauncher.json` from the release zip, next to `UGH!64.exe` inside the zip's one
+  folder. The file names the game folder the player picks (proof: `UGH.EXE`), the start command
+  (`UGH!64.exe "<folder>"`, the folder is the only argument), the settings it shows (`Scale`,
+  `FullScreen`, `Crt` in section `UGH64` of `%APPDATA%\UGH64\UGH64.ini`), the saves
+  (`%APPDATA%\UGH64\UGH!.HI`) and the meaning of exit code 1.
+- **The rule.** Every release zip carries `recomplauncher.json`: the copy in the repository alone
+  does nothing for players. `package.cmd` copies it into the zip's folder. The zip's name keeps
+  the word `win64`.
+- **Keep in step.** If the command line, a settings key or value, the program's file name, the
+  ini's name or the saves folder changes, `recomplauncher.json` changes in the same release. A
+  renamed program or release file also means editing `$Program` or `$Asset` in
+  `launcher/setup.ps1`.
+- **sp00nznet's recomp-launcher** builds one installer per game from `launcher/launcher.json`. The
+  installer finds or asks for the game folder, downloads the repository and runs
+  `launcher/setup.ps1` (Windows only). The setup compiles nothing: it checks the game folder
+  (`UGH.EXE` or `UGH1.EXE`), downloads the newest release zip of `ugh-re` (checked against the
+  SHA-256 GitHub lists), unpacks it into `play\` and writes `UGH (recomp).cmd` in the repository's
+  root, which starts `play\UGH!64.exe` with the game folder. The project is not in sp00nznet's own
+  `catalog.json`.
+- **The `!` in the release file's name.** GitHub turns the `!` of an uploaded file name into `.`:
+  `UGH!64-1.0-win64.zip` is shown and downloaded as `UGH.64-1.0-win64.zip`. This is why
+  `launcher/setup.ps1` looks for `UGH*64-*-win64.zip`.
+- **The installer workflow.** `.github/workflows/installer.yml` calls sp00nznet's reusable
+  workflow, pinned to commit `005639c34bc2fc3096219fce2bd0a5ea13f8ac5b` (also as `launcher-ref`).
+  Its job has `if: github.repository == 'Buyukcaglar/ugh-re'`, so it runs in the public
+  repository only. There, a push to `main` that changes `launcher/**` or the workflow builds the
+  installer as a workflow artifact. A pushed `v*` tag also attaches
+  `UGH64-Installer-windows-x64.exe` and `SHA256SUMS.txt` to that tag's release, and creates the
+  release with generated notes if it does not exist yet: create the GitHub release first, or edit
+  the notes afterwards.
+- **The 1.0 release.** On 26 November 2026 the v1.0 zip on `ugh-re` was replaced in place: the
+  same tag, the same three files byte for byte (`UGH!64.exe`, `README.md`, `LICENSE.txt`) plus
+  `UGH!64-1.0-win64/recomplauncher.json`. No new version and no rebuild. The asset GitHub shows as
+  `UGH.64-1.0-win64.zip` is now 519,473 bytes, SHA-256
+  `337d665357d6664a29757764e7452801c8fad1fa5b540d59351cb986570ef95f`. That release has no
+  installer yet: it comes with the next tagged version.
+- **Making a release**, as far as it is known: commit in the private repository; run
+  `tools\publish.ps1 -Message "..."` (copies HEAD without `src/gen/gen_all.c` to `ugh-re` and
+  pushes); run `package.cmd`; upload `dist\UGH!64-<version>-win64.zip` to the release on `ugh-re`.
+  The version (`1.0`) is written out in `package.cmd`.
 
 ## Notes for later
 
